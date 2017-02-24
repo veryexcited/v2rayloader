@@ -5,7 +5,7 @@ My V2Ray Loader
 
 将`v2ray.exe`、`config.json`与`loader.exe`置于同一目录下。
 
-配置好GreenChrome后，v2ray将随Chrome启动，随Chrome关闭，`最重要的是不会出现控制台黑窗口`。
+`配置好GreenChrome后，v2ray将随Chrome启动，随Chrome关闭`，最重要的是不会出现控制台黑窗口。
 ```text
 GreenChrome.ini
 [启动时运行]
